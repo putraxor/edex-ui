@@ -20,7 +20,7 @@ class UpdateChecker {
                 "User-Agent": "eDEX-UI UpdateChecker"
             }
         }, res => {
-            switch(res.statusCode) {
+            switch (res.statusCode) {
                 case 200:
                     break;
                 case 404:
@@ -51,10 +51,10 @@ class UpdateChecker {
                             new Modal({
                                 type: "info",
                                 title: "New version available",
-                                message: `eDEX-UI <strong>${release.tag_name}</strong> is now available.<br/>Head over to <a href="#" onclick="require('electron').shell.openExternal('${release.html_url}')">github.com</a> to download the latest version.`
+                                message: `KODEVERSITAS <strong>${release.tag_name}</strong> is now available.<br/>Head over to <a href="#" onclick="require('electron').shell.openExternal('${release.html_url}')">github.com</a> to download the latest version.`
                             });
                         }
-                    } catch(e) {
+                    } catch (e) {
                         this._fail(e);
                     }
                 }

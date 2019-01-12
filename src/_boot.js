@@ -1,5 +1,5 @@
 const signale = require("signale");
-const {app, BrowserWindow, dialog, shell} = require("electron");
+const { app, BrowserWindow, dialog, shell } = require("electron");
 
 process.on("uncaughtException", e => {
     signale.fatal(e);
@@ -52,7 +52,7 @@ if (process.env.https_proxy) delete process.env.https_proxy;
 try {
     fs.mkdirSync(electron.app.getPath("userData"));
     signale.info(`Created config dir at ${electron.app.getPath("userData")}`);
-} catch(e) {
+} catch (e) {
     signale.info(`Base config dir is ${electron.app.getPath("userData")}`);
 }
 // Create default settings file
@@ -70,23 +70,23 @@ if (!fs.existsSync(settingsFile)) {
 // Copy default themes & keyboard layouts & fonts
 try {
     fs.mkdirSync(themesDir);
-} catch(e) {
+} catch (e) {
     // Folder already exists
 }
 fs.readdirSync(innerThemesDir).forEach((e) => {
-    fs.writeFileSync(path.join(themesDir, e), fs.readFileSync(path.join(innerThemesDir, e), {encoding:"utf-8"}));
+    fs.writeFileSync(path.join(themesDir, e), fs.readFileSync(path.join(innerThemesDir, e), { encoding: "utf-8" }));
 });
 try {
     fs.mkdirSync(kblayoutsDir);
-} catch(e) {
+} catch (e) {
     // Folder already exists
 }
 fs.readdirSync(innerKblayoutsDir).forEach((e) => {
-    fs.writeFileSync(path.join(kblayoutsDir, e), fs.readFileSync(path.join(innerKblayoutsDir, e), {encoding:"utf-8"}));
+    fs.writeFileSync(path.join(kblayoutsDir, e), fs.readFileSync(path.join(innerKblayoutsDir, e), { encoding: "utf-8" }));
 });
 try {
     fs.mkdirSync(fontsDir);
-} catch(e) {
+} catch (e) {
     // Folder already exists
 }
 fs.readdirSync(innerFontsDir).forEach((e) => {
@@ -102,10 +102,10 @@ function createWindow(settings) {
     } else {
         display = electron.screen.getPrimaryDisplay();
     }
-    let {x, y, width, height} = display.bounds;
+    let { x, y, width, height } = display.bounds;
     width++; height++;
     win = new BrowserWindow({
-        title: "eDEX-UI",
+        title: "KODEVERSITAS",
         x,
         y,
         width,
@@ -170,7 +170,7 @@ app.on('ready', () => {
     });
     signale.success(`Terminal back-end initialized!`);
     tty.onclosed = (code, signal) => {
-        tty.ondisconnected = () => {};
+        tty.ondisconnected = () => { };
         signale.complete("Terminal exited", code, signal);
         app.quit();
     };
@@ -188,7 +188,7 @@ app.on('ready', () => {
 
     // Clipboard backend access
     ipc.on("clipboard", (e, arg) => {
-        switch(arg) {
+        switch (arg) {
             case "read":
                 clip.read().then(text => {
                     e.sender.send("clipboard-reply", text);
@@ -211,7 +211,7 @@ app.on('ready', () => {
     basePort = Number(basePort) + 2;
 
     for (let i = 0; i < 4; i++) {
-        extraTtys[basePort+i] = null;
+        extraTtys[basePort + i] = null;
     }
 
     ipc.on("ttyspawn", (e, arg) => {
@@ -238,7 +238,7 @@ app.on('ready', () => {
             });
             signale.success(`New terminal back-end initialized at ${port}`);
             term.onclosed = (code, signal) => {
-                term.ondisconnected = () => {};
+                term.ondisconnected = () => { };
                 term.wss.close();
                 signale.complete(`TTY exited at ${port}`, code, signal);
                 extraTtys[term.port] = null;
@@ -247,9 +247,9 @@ app.on('ready', () => {
             term.onopened = () => {
                 signale.success(`TTY ${port} connected to frontend`);
             };
-            term.onresized = () => {};
+            term.onresized = () => { };
             term.ondisconnected = () => {
-                term.onclosed = () => {};
+                term.onclosed = () => { };
                 term.close();
                 term.wss.close();
                 extraTtys[term.port] = null;
@@ -257,7 +257,7 @@ app.on('ready', () => {
             };
 
             extraTtys[port] = term;
-            e.sender.send("ttyspawn-reply", "SUCCESS: "+port);
+            e.sender.send("ttyspawn-reply", "SUCCESS: " + port);
         }
     });
 

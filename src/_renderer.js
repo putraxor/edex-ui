@@ -11,7 +11,7 @@ window._escapeHtml = (text) => {
         '"': '&quot;',
         "'": '&#039;'
     };
-    return text.replace(/[&<>"']/g, m => {return map[m];});
+    return text.replace(/[&<>"']/g, m => { return map[m]; });
 };
 window._purifyCSS = (str) => {
     return str.replace(/[<]/g, "");
@@ -48,9 +48,9 @@ ipc.once("getThemeOverride", (e, theme) => {
     if (theme !== null) {
         window.settings.theme = theme;
         window.settings.nointro = true;
-        _loadTheme(require(path.join(themesDir, window.settings.theme+".json")));
+        _loadTheme(require(path.join(themesDir, window.settings.theme + ".json")));
     } else {
-        _loadTheme(require(path.join(themesDir, window.settings.theme+".json")));
+        _loadTheme(require(path.join(themesDir, window.settings.theme + ".json")));
     }
 });
 ipc.send("getThemeOverride");
@@ -71,16 +71,16 @@ window._loadTheme = (theme) => {
     }
 
     // Load fonts
-    let mainFont = new FontFace(theme.cssvars.font_main, `url("${path.join(fontsDir, theme.cssvars.font_main.toLowerCase().replace(/ /g, '_')+'.woff2').replace(/\\/g, '/')}")`);
-    let lightFont = new FontFace(theme.cssvars.font_main_light, `url("${path.join(fontsDir, theme.cssvars.font_main_light.toLowerCase().replace(/ /g, '_')+'.woff2').replace(/\\/g, '/')}")`);
-    let termFont = new FontFace(theme.terminal.fontFamily, `url("${path.join(fontsDir, theme.terminal.fontFamily.toLowerCase().replace(/ /g, '_')+'.woff2').replace(/\\/g, '/')}")`);
+    let mainFont = new FontFace(theme.cssvars.font_main, `url("${path.join(fontsDir, theme.cssvars.font_main.toLowerCase().replace(/ /g, '_') + '.woff2').replace(/\\/g, '/')}")`);
+    let lightFont = new FontFace(theme.cssvars.font_main_light, `url("${path.join(fontsDir, theme.cssvars.font_main_light.toLowerCase().replace(/ /g, '_') + '.woff2').replace(/\\/g, '/')}")`);
+    let termFont = new FontFace(theme.terminal.fontFamily, `url("${path.join(fontsDir, theme.terminal.fontFamily.toLowerCase().replace(/ /g, '_') + '.woff2').replace(/\\/g, '/')}")`);
 
     document.fonts.add(mainFont);
-    document.fonts.load("12px "+theme.cssvars.font_main);
+    document.fonts.load("12px " + theme.cssvars.font_main);
     document.fonts.add(lightFont);
-    document.fonts.load("12px "+theme.cssvars.font_main_light);
+    document.fonts.load("12px " + theme.cssvars.font_main_light);
     document.fonts.add(termFont);
-    document.fonts.load("12px "+theme.terminal.fontFamily);
+    document.fonts.load("12px " + theme.terminal.fontFamily);
 
     document.querySelector("head").innerHTML += `<style class="theming">
     :root {
@@ -156,8 +156,8 @@ function displayLine() {
 
     function isArchUser() {
         return require("os").platform() === "linux"
-                && fs.existsSync("/etc/os-release")
-                && fs.readFileSync("/etc/os-release").toString().includes("arch");
+            && fs.existsSync("/etc/os-release")
+            && fs.readFileSync("/etc/os-release").toString().includes("arch");
     }
 
     if (log[i] === undefined) {
@@ -170,12 +170,12 @@ function displayLine() {
     } else {
         window.audioManager.beep1.play();
     }
-    bootScreen.innerHTML += log[i]+"<br/>";
+    bootScreen.innerHTML += log[i] + "<br/>";
     i++;
 
-    switch(true) {
+    switch (true) {
         case i === 2:
-            bootScreen.innerHTML += `eDEX-UI Kernel version ${electron.remote.app.getVersion()} boot at ${Date().toString()}; root:xnu-1699.22.73~1/RELEASE_X86_64`;
+            bootScreen.innerHTML += `KODEVERSITAS Kernel version ${electron.remote.app.getVersion()} boot at ${Date().toString()}; root:xnu-1699.22.73~1/RELEASE_X86_64`;
         case i === 4:
             setTimeout(displayLine, 500);
             break;
@@ -196,11 +196,11 @@ function displayLine() {
                 bootScreen.innerHTML += "btw i use arch<br/>";
             setTimeout(displayLine, 25);
             break;
-        case i >= log.length-2 && i < log.length:
+        case i >= log.length - 2 && i < log.length:
             setTimeout(displayLine, 300);
             break;
         default:
-            setTimeout(displayLine, Math.pow(1 - (i/1000), 3)*25);
+            setTimeout(displayLine, Math.pow(1 - (i / 1000), 3) * 25);
     }
 }
 
@@ -219,7 +219,7 @@ function resumeInit() {
 
         window.audioManager.beep4.play();
         bootScreen.setAttribute("class", "center");
-        bootScreen.innerHTML = "<h1>eDEX-UI</h1>";
+        bootScreen.innerHTML = "<h1>KODEVERSITAS</h1>";
         let title = document.querySelector("section > h1");
 
         setTimeout(() => {
@@ -283,7 +283,7 @@ function initUI() {
                 <section id="keyboard" style="opacity:0;">
                 </section>`;
                 window.keyboard = new Keyboard({
-                    layout: path.join(keyboardsDir, settings.keyboard+".json"),
+                    layout: path.join(keyboardsDir, settings.keyboard + ".json"),
                     container: "keyboard"
                 });
                 setTimeout(() => {
@@ -312,15 +312,15 @@ function initSystemInformationProxy() {
     const nanoid = require("nanoid/non-secure");
 
     window.si = new Proxy({}, {
-        apply: () => {throw new Error("Cannot use sysinfo proxy directly as a function")},
-        set: () => {throw new Error("Cannot set a property on the sysinfo proxy")},
+        apply: () => { throw new Error("Cannot use sysinfo proxy directly as a function") },
+        set: () => { throw new Error("Cannot set a property on the sysinfo proxy") },
         get: (target, prop, receiver) => {
-            return function(...args) {
+            return function (...args) {
                 let callback = (typeof args[0] === "function") ? true : false;
 
                 return new Promise((resolve, reject) => {
                     let id = nanoid();
-                    ipc.once("systeminformation-reply-"+id, (e, res) => {
+                    ipc.once("systeminformation-reply-" + id, (e, res) => {
                         if (callback) {
                             callback(res);
                         }
@@ -387,14 +387,14 @@ function initGreeter() {
         .catch(() => {
             greeter.innerHTML += "Welcome back";
         })
-    .then(() => {
-        greeter.setAttribute("style", "opacity: 1;");
-        setTimeout(() => {
-            greeter.setAttribute("style", "opacity: 0;");
+        .then(() => {
+            greeter.setAttribute("style", "opacity: 1;");
             setTimeout(() => {
-                greeter.remove();
+                greeter.setAttribute("style", "opacity: 0;");
                 setTimeout(() => {
-                    shellContainer.innerHTML += `
+                    greeter.remove();
+                    setTimeout(() => {
+                        shellContainer.innerHTML += `
                         <ul id="main_shell_tabs">
                             <li id="shell_tab0" onclick="window.focusShellTab(0);" class="active">MAIN SHELL</li>
                             <li id="shell_tab1" onclick="window.focusShellTab(1);">EMPTY</li>
@@ -409,34 +409,34 @@ function initGreeter() {
                             <pre id="terminal3"></pre>
                             <pre id="terminal4"></pre>
                         </div>`;
-                    window.term = {
-                        0: new Terminal({
-                            role: "client",
-                            parentId: "terminal0",
-                            port: window.settings.port || 3000
-                        })
-                    };
-                    window.currentTerm = 0;
-                    window.term[0].onprocesschange = p => {
-                        document.getElementById("shell_tab0").innerText = "MAIN - "+p;
-                    };
-                    // Prevent losing hardware keyboard focus on the terminal when using touch keyboard
-                    window.onmouseup = (e) => {
-                        window.term[window.currentTerm].term.focus();
-                    };
+                        window.term = {
+                            0: new Terminal({
+                                role: "client",
+                                parentId: "terminal0",
+                                port: window.settings.port || 3000
+                            })
+                        };
+                        window.currentTerm = 0;
+                        window.term[0].onprocesschange = p => {
+                            document.getElementById("shell_tab0").innerText = "MAIN - " + p;
+                        };
+                        // Prevent losing hardware keyboard focus on the terminal when using touch keyboard
+                        window.onmouseup = (e) => {
+                            window.term[window.currentTerm].term.focus();
+                        };
 
-                    window.fsDisp = new FilesystemDisplay({
-                        parentId: "filesystem"
-                    });
+                        window.fsDisp = new FilesystemDisplay({
+                            parentId: "filesystem"
+                        });
 
-                    setTimeout(() => {
-                        document.getElementById("filesystem").setAttribute("style", "opacity: 1;");
-                        window.updateCheck = new UpdateChecker();
-                    }, 300);
-                }, 100);
-            }, 500);
-        }, 1100);
-    });
+                        setTimeout(() => {
+                            document.getElementById("filesystem").setAttribute("style", "opacity: 1;");
+                            window.updateCheck = new UpdateChecker();
+                        }, 300);
+                    }, 100);
+                }, 500);
+            }, 1100);
+        });
 }
 
 window.themeChanger = (theme) => {
@@ -449,7 +449,7 @@ window.themeChanger = (theme) => {
 window.remakeKeyboard = (layout) => {
     document.getElementById("keyboard").innerHTML = "";
     window.keyboard = new Keyboard({
-        layout: path.join(keyboardsDir, layout+".json" || settings.keyboard+".json"),
+        layout: path.join(keyboardsDir, layout + ".json" || settings.keyboard + ".json"),
         container: "keyboard"
     });
     ipc.send("setKbOverride", layout);
@@ -461,15 +461,15 @@ window.focusShellTab = (number) => {
     if (number !== window.currentTerm && window.term[number]) {
         window.currentTerm = number;
 
-        document.querySelectorAll(`ul#main_shell_tabs > li:not(:nth-child(${number+1}))`).forEach(e => {
+        document.querySelectorAll(`ul#main_shell_tabs > li:not(:nth-child(${number + 1}))`).forEach(e => {
             e.setAttribute("class", "");
         });
-        document.getElementById("shell_tab"+number).setAttribute("class", "active");
+        document.getElementById("shell_tab" + number).setAttribute("class", "active");
 
-        document.querySelectorAll(`div#main_shell_innercontainer > pre:not(:nth-child(${number+1}))`).forEach(e => {
+        document.querySelectorAll(`div#main_shell_innercontainer > pre:not(:nth-child(${number + 1}))`).forEach(e => {
             e.setAttribute("class", "");
         });
-        document.getElementById("terminal"+number).setAttribute("class", "active");
+        document.getElementById("terminal" + number).setAttribute("class", "active");
 
         window.term[number].fit();
         window.term[number].term.focus();
@@ -479,33 +479,33 @@ window.focusShellTab = (number) => {
     } else if (number > 0 && number <= 4 && window.term[number] !== null && typeof window.term[number] !== "object") {
         window.term[number] = null;
 
-        document.getElementById("shell_tab"+number).innerText = "LOADING...";
+        document.getElementById("shell_tab" + number).innerText = "LOADING...";
         ipc.send("ttyspawn", "true");
         ipc.once("ttyspawn-reply", (e, r) => {
             if (r.startsWith("ERROR")) {
-                document.getElementById("shell_tab"+number).innerText = "ERROR";
+                document.getElementById("shell_tab" + number).innerText = "ERROR";
             } else if (r.startsWith("SUCCESS")) {
                 let port = Number(r.substr(9));
 
                 window.term[number] = new Terminal({
                     role: "client",
-                    parentId: "terminal"+number,
+                    parentId: "terminal" + number,
                     port
                 });
 
                 window.term[number].onclose = e => {
                     delete window.term[number].onprocesschange;
-                    document.getElementById("shell_tab"+number).innerText = "EMPTY";
-                    document.getElementById("terminal"+number).innerHTML = "";
+                    document.getElementById("shell_tab" + number).innerText = "EMPTY";
+                    document.getElementById("terminal" + number).innerHTML = "";
                     delete window.term[number];
                     window.focusShellTab(0);
                 };
 
                 window.term[number].onprocesschange = p => {
-                    document.getElementById("shell_tab"+number).innerText = `#${number+1} - ${p}`;
+                    document.getElementById("shell_tab" + number).innerText = `#${number + 1} - ${p}`;
                 };
 
-                document.getElementById("shell_tab"+number).innerText = "::"+port;
+                document.getElementById("shell_tab" + number).innerText = "::" + port;
                 setTimeout(() => {
                     window.focusShellTab(number);
                 }, 500);
@@ -547,29 +547,29 @@ function registerKeyboardShortcuts() {
     // Switch tabs
     // Next
     globalShortcut.register("CommandOrControl+Tab", () => {
-        if (window.term[window.currentTerm+1]) {
-            window.focusShellTab(window.currentTerm+1);
-        } else if (window.term[window.currentTerm+2]) {
-            window.focusShellTab(window.currentTerm+2);
-        } else if (window.term[window.currentTerm+3]) {
-            window.focusShellTab(window.currentTerm+3);
-        } else if (window.term[window.currentTerm+4]) {
-            window.focusShellTab(window.currentTerm+4);
+        if (window.term[window.currentTerm + 1]) {
+            window.focusShellTab(window.currentTerm + 1);
+        } else if (window.term[window.currentTerm + 2]) {
+            window.focusShellTab(window.currentTerm + 2);
+        } else if (window.term[window.currentTerm + 3]) {
+            window.focusShellTab(window.currentTerm + 3);
+        } else if (window.term[window.currentTerm + 4]) {
+            window.focusShellTab(window.currentTerm + 4);
         } else {
             window.focusShellTab(0);
         }
     });
     // Previous
     globalShortcut.register("CommandOrControl+Shift+Tab", () => {
-        if (window.term[window.currentTerm-1]) {
-            window.focusShellTab(window.currentTerm-1);
-        } else if (window.term[window.currentTerm-2]) {
-            window.focusShellTab(window.currentTerm-2);
-        } else if (window.term[window.currentTerm-3]) {
-            window.focusShellTab(window.currentTerm-3);
-        } else if (window.term[window.currentTerm-4]) {
-            window.focusShellTab(window.currentTerm-4);
-        } else if (window.term[4]){
+        if (window.term[window.currentTerm - 1]) {
+            window.focusShellTab(window.currentTerm - 1);
+        } else if (window.term[window.currentTerm - 2]) {
+            window.focusShellTab(window.currentTerm - 2);
+        } else if (window.term[window.currentTerm - 3]) {
+            window.focusShellTab(window.currentTerm - 3);
+        } else if (window.term[window.currentTerm - 4]) {
+            window.focusShellTab(window.currentTerm - 4);
+        } else if (window.term[4]) {
             window.focusShellTab(4);
         }
     });
